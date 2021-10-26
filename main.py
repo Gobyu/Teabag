@@ -102,8 +102,13 @@ async def on_message(message):
     ## CMD: !rng ##
     if msg.startswith('!rng'):
       rng_range = msg.split("rng ",1)[1]
-      result_number = rng(int(rng_range))
-      await message.channel.send("`random number from 1 to " + str(rng_range) + ":` " + "**" + str(result_number) + "**")
+      if rng_range.isdigit() == False:
+        await message.channel.send("cannot pick a random number between 1 and a non number")
+      elif int(rng_range) < 1:
+        await message.channel.send("cannot pick a random number between 1 and " + str(rng_range))
+      else:
+        result_number = rng(int(rng_range))
+        await message.channel.send("`random number from 1 to " + str(rng_range) + ":` " + "**" + str(result_number) + "**")
     
     ## CMD: !profanitylist ##
     if msg.startswith('!profanitylist'):
