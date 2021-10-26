@@ -1,0 +1,2 @@
+# TrashBot
+Discord Bot
