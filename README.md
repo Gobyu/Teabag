@@ -1,2 +1,2 @@
-# TrashBot
+# Teabag
 Discord Bot
