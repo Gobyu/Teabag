@@ -21,6 +21,41 @@ profanity_list = db["swears_list"]
 
 
 
+## FUNC: rock_paper_scissors ##
+def rock_paper_scissors(you):
+  computer = random.randint(1,3)
+
+  if computer == 1:
+    if you.lower() == "rock":
+      return "Computer: :rock:\nYou: :rock:\n`Result: Tie.` :no_mouth:"
+    if you.lower() == "paper":
+      return "Computer: :rock:\nYou: :roll_of_paper:\n`Result: You Win!` :slight_smile:"
+    if you.lower() == "scissors":
+      return "Computer: :rock:\nYou: :scissors:\n`Result: You Lose.` :slight_frown:"
+
+  elif computer == 2:
+    if you.lower() == "rock":
+      return "Computer: :roll_of_paper:\nYou: :rock:\n`Result: You Lose.` :slight_frown:"
+    if you.lower() == "paper":
+      return "Computer: :roll_of_paper:\nYou: :roll_of_paper:\n`Result: Tie.` :no_mouth:"
+    if you.lower() == "scissors":
+      return "Computer: :roll_of_paper:\nYou: :scissors:\n`Result: You Win!` :slight_smile:"
+
+  elif computer == 3:
+    if you.lower() == "rock":
+      return "Computer: :scissors:\nYou: :rock:\n`Result: You Win!` :slight_smile:"
+    if you.lower() == "paper":
+      return "Computer: :scissors:\nYou: :roll_of_paper:\n`Result: You Lose.` :slight_frown:"
+    if you.lower() == "scissors":
+      return "Computer: :scissors:\nYou: :scissors:\n`Result: Tie.` :no_mouth:"
+
+## FUNC: coin_flip ##
+def coin_flip():
+  flip = random.randint(0,1)
+  if flip == 0:
+    return "Tails"
+  elif flip == 1:
+    return "Heads"
 
 ## FUNC: get_city_time ##
 def get_city_time(region,city):
@@ -85,14 +120,16 @@ async def on_message(message):
         return
 
     msg = message.content
+    msg_lower = msg.lower()
+    msg_lower_split = msg_lower.split(" ")
 
     ## CMD: !help ##
-    if msg.startswith("!help"):
-      await message.channel.send(':small_orange_diamond::small_blue_diamond:**__List of commands__**:small_blue_diamond::small_orange_diamond:\n\n:o: **1. !addprofanity**\nFunction: add a term to the profanity list\nFormat: !addprofanity {term}\n\n:x: **2. !removeprofanity**\nFunction: remove a term from the profanity list\nFormat: !removeprofanity {term}\n\n:closed_book: **3. !profanitylist**\nFunction: Shows the profanity list\n\n:diamonds: **4. !poker**\nFunction: Sends a random poker card\n\n:game_die: **5. !rng**\nFunction: generates a random number from 0 to N\nFormat: !rng N\n\n:1234: **6. !rate**\nFunction: rates a term\nFormat: !rate {term}\n\n:clock1030: **7. !get_city_time**\nFunction: Sends the time and date of a supported city\nFormat: !get_city_time {region} {city}\n`use !get_regions for a list of regions. Please use _ instead of spaces for cities with more than one word (e.g. Los Angeles --> Los_Angeles)`\n\n:map: **8. !get_regions**\nFunction: Sends a list of supported regions for !get_city_time')
+    if msg_lower.startswith("!help"):
+      await message.channel.send(':small_orange_diamond::small_blue_diamond:**__List of commands__**:small_blue_diamond::small_orange_diamond:\n\n:o: **1. !addprofanity**\nFunction: add a term to the profanity list\nSyntax: !addprofanity {term}\n\n:x: **2. !removeprofanity**\nFunction: remove a term from the profanity list\nSyntax: !removeprofanity {term}\n\n:closed_book: **3. !profanitylist**\nFunction: Shows the profanity list\n\n:diamonds: **4. !poker**\nFunction: Sends a random poker card\n\n:game_die: **5. !rng**\nFunction: generates a random number from 0 to N\nSyntax: !rng N\n\n:1234: **6. !rate**\nFunction: rates a term\nSyntax: !rate {term}\n\n:clock1030: **7. !get_city_time**\nFunction: Sends the time and date of a supported city\nSyntax: !get_city_time {region} {city}\n`use !get_regions for a list of regions. Please use _ instead of spaces for cities with more than one word (e.g. Los Angeles --> Los_Angeles)`\n\n:map: **8. !get_regions**\nFunction: Sends a list of supported regions for !get_city_time\n\n**:coin: 9. !coin_flip**\nFunction: Flip a coin\n\n**:question: 10. !rps**\nFunction: Play Rock Paper Scissors with the computer\nSyntax: !rps {rock,paper,or scissors}')
 
     ## CMD: !addprofanity ##
-    if msg.startswith("!addprofanity"):
-      new_profanity = msg.split("!addprofanity ",1)[1]
+    if msg_lower.startswith("!addprofanity"):
+      new_profanity = msg_lower.split("!addprofanity ",1)[1]
       if add_profanity(profanity_list, new_profanity) != False:
         db["swears_list"] = profanity_list
         await message.channel.send(message.author.mention + ' added **"' + new_profanity + '"**' + " to the profanity list.")
@@ -101,24 +138,25 @@ async def on_message(message):
     else:
 
       ## CMD: !removeprofanity ##
-      if msg.startswith("!removeprofanity"):
-        new_profanity = msg.split("removeprofanity ",1)[1]
+      if msg_lower.startswith("!removeprofanity"):
+        new_profanity = msg_lower.split("removeprofanity ",1)[1]
         if del_profanity(profanity_list, new_profanity) != False:
           db["swears_list"] = profanity_list
           await message.channel.send(message.author.mention + ' deleted **"' + new_profanity + '"**' + " from the profanity list.")
         else:
           await message.channel.send('**"' + new_profanity + '"**' + " does not exist in the profanity list")
       else:
-        if any(word in msg for word in profanity_list):
+        if any(word in msg_lower_split for word in profanity_list):
+          await message.delete()
           await message.channel.send(message.author.mention + " " + profanity_warning)
 
     ## CMD: !poker ##  
-    if msg.startswith('!poker'):
+    if msg_lower.startswith('!poker'):
       await message.channel.send("`" + random.choice(poker_cards) + random.choice(poker_suits) + "`")
 
     ## CMD: !rng ##
-    if msg.startswith('!rng'):
-      rng_range = msg.split("rng ",1)[1]
+    if msg_lower.startswith('!rng'):
+      rng_range = msg_lower.split("rng ",1)[1]
       if rng_range.isdigit() == False:
         await message.channel.send("cannot pick a random number between 1 and a non number")
       elif int(rng_range) < 1:
@@ -128,18 +166,18 @@ async def on_message(message):
         await message.channel.send(":game_die:`random number from 1 to " + str(rng_range) + ":` " + "**" + str(result_number) + "**")
     
     ## CMD: !profanitylist ##
-    if msg.startswith('!profanitylist'):
+    if msg_lower.startswith('!profanitylist'):
       await message.channel.send(":closed_book: **Profanity List: **" + "` " + generate_profanity_string(profanity_list) + "`")
 
     ## CMD: !clearprofanity ##
-    if msg.startswith('!clearprofanity'):
+    if msg_lower.startswith('!clearprofanity'):
       clr_profanity(profanity_list)
       db["swears_list"] = profanity_list
       await message.channel.send(message.author.mention + " cleared the profanity list.")
 
     ## CMD: !rate ##
-    if msg.startswith('!rate'):
-      ratee = msg.split("!rate ",1)[1]
+    if msg_lower.startswith('!rate'):
+      ratee = msg_lower.split("!rate ",1)[1]
       rating = rate_something()
       if float(rating) < 3:
         await message.channel.send(":clown: BOO! " + ratee + "'s rating is **" + rating + "/10**")
@@ -151,8 +189,8 @@ async def on_message(message):
         await message.channel.send(ratee + " is a KING! :crown: **" + rating + "/10**")
 
     ## CMD: !get_city_time ##
-    if msg.startswith('!get_city_time'):
-      region_city = msg.split("!get_city_time ",1)[1]
+    if msg_lower.startswith('!get_city_time'):
+      region_city = msg_lower.split("!get_city_time ",1)[1]
       region = region_city.split(" ",1)[0]
       city = region_city.split(" ",1)[1]
       if get_city_time(region,city) != False:
@@ -161,8 +199,17 @@ async def on_message(message):
         await message.channel.send("Either the Region/City is not supported or command format incorrect. Use !help for formatting help")
 
     ## CMD: !get_regions ##
-    if msg.startswith('!get_regions'):
+    if msg_lower.startswith('!get_regions'):
       await message.channel.send("Africa, America, Antartica, Asia, Atlantic, Australia, Europe, Indian, Pacific")
+
+    ## CMD: !coin_flip ##
+    if msg_lower.startswith('!coin_flip'):
+      await message.channel.send(":coin: Coin Flip: " + coin_flip())
+
+    ## CMD: !RPS ##
+    if msg_lower.startswith('!rps'):
+      your_RPS = msg_lower.split("!rps ",1)[1]
+      await message.channel.send(rock_paper_scissors(your_RPS))
 
 
 
