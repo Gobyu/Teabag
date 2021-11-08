@@ -1,2 +1,2 @@
 # Teabag
-Discord Bot
+Readme
